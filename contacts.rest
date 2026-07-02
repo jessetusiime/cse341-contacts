@@ -1,0 +1,28 @@
+### Home Route
+GET http://localhost:8080/
+
+###
+
+### Get All Contacts
+GET http://localhost:8080/contacts
+
+
+###
+
+### Get Contact By ID
+GET http://localhost:8080/contacts/6a461b5da8e3dc5bf5f8edf0
+
+###
+
+### Home route(Render)
+GET  https://cse341-contacts-h7ua.onrender.com
+
+###
+
+### Get All Contacts(Render)
+GET https://cse341-contacts-h7ua.onrender.com/contacts
+
+###
+
+### Get Contact by ID(Render)
+GET https://cse341-contacts-h7ua.onrender.com/contacts/6a461b5da8e3dc5bf5f8edf0
