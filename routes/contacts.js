@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { ObjectId } = require("mongodb");
 
-const { connectDB } = require("../mongodb");
+const connectDB = require("../mongodb");
 
 router.get("/", async (req, res) => {
     try {
