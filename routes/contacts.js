@@ -1,54 +1,36 @@
 const express = require("express");
 const router = express.Router();
-const { ObjectId } = require("mongodb");
 
-const connectDB = require("../mongodb");
+const contactsController = require("../controllers/contacts");
 
-router.get("/", async (req, res) => {
-    try {
+/* #swagger.tags = ['Contacts']
+   #swagger.summary = 'Get all contacts'
+   #swagger.description = 'Returns all contacts stored in the MongoDB database.'
+*/
+router.get("/", contactsController.getAllContacts);
 
-        const db = await connectDB();
+/* #swagger.tags = ['Contacts']
+   #swagger.summary = 'Get a contact by ID'
+   #swagger.description = 'Returns a single contact using its MongoDB ObjectId.'
+*/
+router.get("/:id", contactsController.getSingleContact);
 
-        const contacts = await db
-            .collection("contacts")
-            .find()
-            .toArray();
+/* #swagger.tags = ['Contacts']
+   #swagger.summary = 'Create a new contact'
+   #swagger.description = 'Creates a new contact in the database.'
+*/
+router.post("/", contactsController.createContact);
 
-        res.json(contacts);
+/* #swagger.tags = ['Contacts']
+   #swagger.summary = 'Update a contact'
+   #swagger.description = 'Updates an existing contact using its MongoDB ObjectId.'
+*/
+router.put("/:id", contactsController.updateContact);
 
-    } catch (err) {
-        res.status(500).json({
-            message: err.message
-        });
-    }
-});
-
-router.get("/:id", async (req, res) => {
-    try {
-
-        const db = await connectDB();
-
-        const contactId = new ObjectId(req.params.id);
-
-        const contact = await db
-            .collection("contacts")
-            .findOne({ _id: contactId });
-
-        if (!contact) {
-            return res.status(404).json({
-                message: "Contact not found"
-            });
-        }
-
-        res.json(contact);
-
-    } catch (err) {
-
-        res.status(500).json({
-            message: err.message
-        });
-
-    }
-});
+/* #swagger.tags = ['Contacts']
+   #swagger.summary = 'Delete a contact'
+   #swagger.description = 'Deletes a contact using its MongoDB ObjectId.'
+*/
+router.delete("/:id", contactsController.deleteContact);
 
 module.exports = router;
