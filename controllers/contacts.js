@@ -25,6 +25,12 @@ const getSingleContact = async (req, res) => {
     try {
         const db = await connectDB();
 
+        if (!ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                message: "Invalid contact ID"
+            });
+        }
+
         const contactId = new ObjectId(req.params.id);
 
         const contact = await db
@@ -93,6 +99,12 @@ const createContact = async (req, res) => {
 // PUT - Update a contact
 const updateContact = async (req, res) => {
     try {
+        if (!ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                message: "Invalid contact ID"
+            });
+        }
+
         const contactId = new ObjectId(req.params.id);
 
         const {
@@ -149,6 +161,12 @@ const updateContact = async (req, res) => {
 // Delete a contact
 const deleteContact = async (req, res) => {
     try {
+        if (!ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                message: "Invalid contact ID"
+            });
+        }
+
         const contactId = new ObjectId(req.params.id);
 
         const db = await connectDB();
