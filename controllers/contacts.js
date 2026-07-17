@@ -1,192 +1,81 @@
-const { ObjectId } = require("mongodb");
-const connectDB = require("../mongodb");
+const mongoose = require("mongoose");
+const Contact = require("../models/Contact");
 
 // GET all contacts
 const getAllContacts = async (req, res) => {
     try {
-        const db = await connectDB();
-
-        const contacts = await db
-            .collection("contacts")
-            .find()
-            .toArray();
-
-        res.json(contacts);
-
+        const contacts = await Contact.find();
+        res.status(200).json(contacts);
     } catch (err) {
-        res.status(500).json({
-            message: err.message
-        });
+        res.status(500).json({ message: err.message });
     }
 };
 
 // GET one contact
 const getSingleContact = async (req, res) => {
     try {
-        const db = await connectDB();
-
-        if (!ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({
-                message: "Invalid contact ID"
-            });
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: "Invalid contact ID" });
         }
-
-        const contactId = new ObjectId(req.params.id);
-
-        const contact = await db
-            .collection("contacts")
-            .findOne({ _id: contactId });
-
+        const contact = await Contact.findById(req.params.id);
         if (!contact) {
-            return res.status(404).json({
-                message: "Contact not found"
-            });
+            return res.status(404).json({ message: "Contact not found" });
         }
-
-        res.json(contact);
-
+        res.status(200).json(contact);
     } catch (err) {
-        res.status(500).json({
-            message: err.message
-        });
+        res.status(500).json({ message: err.message });
     }
 };
 
 // Create a new contact
 const createContact = async (req, res) => {
     try {
-        const {
-            firstName,
-            lastName,
-            email,
-            favoriteColor,
-            birthday
-        } = req.body;
-
-        if (
-            !firstName ||
-            !lastName ||
-            !email ||
-            !favoriteColor ||
-            !birthday
-        ) {
-            return res.status(400).json({
-                message: "All fields are required."
-            });
-        }
-
-        const db = await connectDB();
-
-        const result = await db.collection("contacts").insertOne({
-            firstName,
-            lastName,
-            email,
-            favoriteColor,
-            birthday
-        });
-
-        res.status(201).json({
-            id: result.insertedId
-        });
-
+        const contact = new Contact(req.body);
+        const savedContact = await contact.save();
+        res.status(201).json({ id: savedContact._id });
     } catch (err) {
-        res.status(500).json({
-            message: err.message
-        });
+        return res.status(400).json({ message: err.message || "All fields are required." });
     }
-};
+}; // Added missing closing bracket here
 
 // PUT - Update a contact
 const updateContact = async (req, res) => {
     try {
-        if (!ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({
-                message: "Invalid contact ID"
-            });
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: "Invalid contact ID" });
         }
 
-        const contactId = new ObjectId(req.params.id);
-
-        const {
-            firstName,
-            lastName,
-            email,
-            favoriteColor,
-            birthday
-        } = req.body;
-
-        // Validate required fields
-        if (
-            !firstName ||
-            !lastName ||
-            !email ||
-            !favoriteColor ||
-            !birthday
-        ) {
-            return res.status(400).json({
-                message: "All fields are required."
-            });
-        }
-
-        const db = await connectDB();
-
-        const result = await db.collection("contacts").updateOne(
-            { _id: contactId },
-            {
-                $set: {
-                    firstName,
-                    lastName,
-                    email,
-                    favoriteColor,
-                    birthday
-                }
-            }
+        // Changed variable name to updatedContact to prevent variable shadowing
+        const updatedContact = await Contact.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
         );
 
-        if (result.matchedCount === 0) {
-            return res.status(404).json({
-                message: "Contact not found."
-            });
+        if (!updatedContact) {
+            return res.status(404).json({ message: "Contact not found." });
         }
 
-        res.sendStatus(204);
-
+        // Changed to 200 JSON so you actually receive the updated document data
+        res.status(200).json(updatedContact);
     } catch (err) {
-        res.status(500).json({
-            message: err.message
-        });
+        res.status(400).json({ message: err.message || "All fields are required." });
     }
 };
 
 // Delete a contact
 const deleteContact = async (req, res) => {
     try {
-        if (!ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({
-                message: "Invalid contact ID"
-            });
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: "Invalid contact ID" });
         }
-
-        const contactId = new ObjectId(req.params.id);
-
-        const db = await connectDB();
-
-        const result = await db.collection("contacts").deleteOne({
-            _id: contactId
-        });
-
-        if (result.deletedCount === 0) {
-            return res.status(404).json({
-                message: "Contact not found."
-            });
+        const deletedContact = await Contact.findByIdAndDelete(req.params.id);
+        if (!deletedContact) {
+            return res.status(404).json({ message: "Contact not found." });
         }
-
         res.sendStatus(204);
-
     } catch (err) {
-        res.status(500).json({
-            message: err.message
-        });
+        res.status(500).json({ message: err.message });
     }
 };
 

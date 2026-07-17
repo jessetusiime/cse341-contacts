@@ -10,7 +10,7 @@ GET http://localhost:8080/contacts
 ###
 
 ### Get Contact By ID
-GET http://localhost:8080/contacts/6a461b5da8e3dc5bf5f8edf0
+GET http://localhost:8080/contacts/6a461bb2a8e3dc5bf5f8edf4
 
 ###
 
@@ -20,29 +20,29 @@ POST http://localhost:8080/contacts
 Content-Type: application/json
 
 {
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "john@example.com",
+    "firstName": "Isaac",
+    "lastName": "Newton",
+    "email": "isaacnewton@gmail.com",
     "favoriteColor": "Blue",
     "birthday": "1998-04-20"
 }
 
 ### Update Contact
 
-PUT http://localhost:8080/contacts/6a528461c0d213aad2545225
+PUT http://localhost:8080/contacts/6a57d29117afc561fe62607a
 Content-Type: application/json
 
 {
-    "firstName": "James",
-    "lastName": "Murphy",
-    "email": "james@example.com",
-    "favoriteColor": "purple",
-    "birthday": "2003-12-17"
+    "firstName": "Isaac",
+    "lastName": "Newton",
+    "email": "isaacnewton@gmail.com",
+    "favoriteColor": "White",
+    "birthday": "1998-04-20"
 }
 
 ### Delete Contact
 
-DELETE http://localhost:8080/contacts/6a528461c0d213aad2545225
+DELETE http://localhost:8080/contacts/6a57d29117afc561fe62607a
 
 ### Home route(Render)
 GET  https://cse341-contacts-h7ua.onrender.com
